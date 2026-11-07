@@ -404,7 +404,7 @@ class HomeFragment : Fragment() {
 
         // GitHub 链接点击
         dialogBinding.layoutGithub.setOnClickListener {
-            openUrl("https://github.com/a422015028/CloudFlareAssistant")
+            openUrl("https://github.com/muort521/CloudFlareAssistant")
         }
 
         // Cloudflare API 文档链接点击

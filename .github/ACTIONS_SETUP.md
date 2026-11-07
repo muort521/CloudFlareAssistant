@@ -5,7 +5,7 @@
 要让 GitHub Actions 自动编译和发布 APK，需要在 GitHub 仓库中配置以下 Secrets：
 
 ### 1. 访问仓库设置
-1. 打开仓库：https://github.com/a422015028/CloudFlareAssistant
+1. 打开仓库：https://github.com/muort521/CloudFlareAssistant
 2. 点击 **Settings** → **Secrets and variables** → **Actions**
 3. 点击 **New repository secret**
 
@@ -25,15 +25,15 @@ Write-Host "密钥库 Base64 已复制到剪贴板，可直接粘贴到 GitHub S
 
 #### KEYSTORE_PASSWORD
 - **Name**: `KEYSTORE_PASSWORD`
-- **Value**: `861390202`
+- **Value**: `你的密钥库密码`（即 `E:\AI\MT.jks` 的 store 密码，**请勿写在本文档里**）
 
 #### KEY_ALIAS
 - **Name**: `KEY_ALIAS`
-- **Value**: `MT`
+- **Value**: `你的密钥别名`（例如 `MT`）
 
 #### KEY_PASSWORD
 - **Name**: `KEY_PASSWORD`
-- **Value**: `861390202`
+- **Value**: `你的密钥密码`（通常与密钥库密码相同，**请勿写在本文档里**）
 
 ### 3. Telegram 发布配置（可选）
 
@@ -85,7 +85,7 @@ git push origin v5.2
 ```
 
 ### 方法 2：手动触发
-1. 访问：https://github.com/a422015028/CloudFlareAssistant/actions
+1. 访问：https://github.com/muort521/CloudFlareAssistant/actions
 2. 选择 **Build and Release APK** workflow
 3. 点击 **Run workflow**
 4. 选择分支并点击 **Run workflow**

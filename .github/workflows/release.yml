@@ -136,7 +136,7 @@ jobs:
         TAG_NAME="${{ steps.version.outputs.tag_name }}"
         APK_FILE="app/build/outputs/apk/release/CloudFlareAssistant-${TAG_NAME}.apk"
         RELEASE_NOTES_FILE="RELEASE_NOTES_${TAG_NAME}.md"
-        RELEASE_NOTES_URL="https://github.com/a422015028/CloudFlareAssistant/blob/main/RELEASE_NOTES_${TAG_NAME}.md"
+        RELEASE_NOTES_URL="${{ github.server_url }}/${{ github.repository }}/blob/main/RELEASE_NOTES_${TAG_NAME}.md"
 
         # 优先使用 RELEASE_NOTES 文件内容作为 caption（Markdown 转 HTML）
         if [ -f "$RELEASE_NOTES_FILE" ] && [ -s "$RELEASE_NOTES_FILE" ]; then
