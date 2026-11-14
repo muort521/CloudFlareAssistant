@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  网络安全配置：让本应用在 Android 17 (API 37) 上也能被 HttpCanary 等抓包工具拦截。
+
+  背景：
+    从 Android 17 开始，系统对 targetSdk>=37 的应用默认启用 证书透明度 (CT) 校验，
+    要求被信任的证书必须在公共 CT 日志中存在 SCT 记录。抓包工具（HttpCanary / Charles
+    等）本地签发的 MITM 证书没有 CT 记录，因此会被系统 SSL 栈拒绝，表现为
+    SSLV3_ALERT_CERTIFICATE_UNKNOWN / Certificate transparency failed。
+    其它 targetSdk<37 的应用不受此限制，所以只有本应用抓不了包。
+
+  本配置：
+    - 信任系统 CA（KSU/Magisk 挂载进去的抓包根证书即位于系统存储）与用户 CA；
+    - 关闭证书透明度校验，使抓包工具签发的证书可以通过验证。
+
+  安全提示：
+    此配置会同时作用于 release 构建。若仅需在 debug 阶段抓包、希望 release 保持
+    Android 17 默认的安全行为，请改用 <debug-overrides> 包裹下面的 trust-anchors
+    与 certificateTransparency，并把 base-config 收敛为仅信任 system。
+-->
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false">
+    <base-config>
         <trust-anchors>
             <certificates src="system" />
+            <certificates src="user" />
         </trust-anchors>
+        <certificateTransparency enabled="false" />
     </base-config>
 </network-security-config>
