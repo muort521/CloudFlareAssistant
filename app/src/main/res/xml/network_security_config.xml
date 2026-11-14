@@ -10,20 +10,28 @@
     其它 targetSdk<37 的应用不受此限制，所以只有本应用抓不了包。
 
   本配置：
-    - 信任系统 CA（KSU/Magisk 挂载进去的抓包根证书即位于系统存储）与用户 CA；
-    - 关闭证书透明度校验，使抓包工具签发的证书可以通过验证。
+    - base-config：信任系统 CA（KSU/Magisk 挂载进去的抓包根证书即位于系统存储），
+      并关闭 CT 校验。这样 debug / release 构建都能抓系统存储里的证书。
+      注意：这里不放 <certificates src="user" />，否则会触发 lint 的
+      AcceptsUserCertificates 错误（release 不允许信任用户 CA）并中断构建。
+    - debug-overrides：仅在 debuggable 构建中额外信任用户 CA，便于把抓包根证书
+      安装到用户存储时也能抓包；release 构建不受影响，保持安全。
 
-  安全提示：
-    此配置会同时作用于 release 构建。若仅需在 debug 阶段抓包、希望 release 保持
-    Android 17 默认的安全行为，请改用 <debug-overrides> 包裹下面的 trust-anchors
-    与 certificateTransparency，并把 base-config 收敛为仅信任 system。
+  安全收紧选项（可选）：
+    若不希望 release 也关闭 CT，可把 <certificateTransparency enabled="false" />
+    也移入 <debug-overrides>，让 release 保持 Android 17 默认的 CT 校验。
 -->
 <network-security-config>
     <base-config>
         <trust-anchors>
             <certificates src="system" />
-            <certificates src="user" />
         </trust-anchors>
         <certificateTransparency enabled="false" />
     </base-config>
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
 </network-security-config>
