@@ -61,8 +61,8 @@ class AccessRuleAdapter : JsonSerializer<AccessRule>, JsonDeserializer<AccessRul
                 context?.deserialize(obj.get("azure_group"), Map::class.java) as? Map<String, String> else null,
             githubOrganization = if (obj.has("github_organization") && !obj.get("github_organization").isJsonNull) 
                 context?.deserialize(obj.get("github_organization"), Map::class.java) as? Map<String, String> else null,
-            geo = if (obj.has("geo") && !obj.get("geo").isJsonNull) 
-                context?.deserialize(obj.get("geo"), Map::class.java) as? Map<String, List<String>> else null,
+            geo = if (obj.has("geo") && obj.get("geo").isJsonObject)
+                deserializeGeo(obj.getAsJsonObject("geo")) else null,
             commonName = if (obj.has("common_name") && !obj.get("common_name").isJsonNull) 
                 context?.deserialize(obj.get("common_name"), Map::class.java) as? Map<String, String> else null,
             serviceToken = if (obj.has("service_token") && !obj.get("service_token").isJsonNull) 
@@ -74,5 +74,23 @@ class AccessRuleAdapter : JsonSerializer<AccessRule>, JsonDeserializer<AccessRul
             authMethod = if (obj.has("auth_method") && !obj.get("auth_method").isJsonNull) 
                 context?.deserialize(obj.get("auth_method"), Map::class.java) as? Map<String, String> else null
         )
+    }
+
+    /**
+     * Geo rule values may be a single country code string or an array of country codes.
+     * Normalize both shapes into Map<String, List<String>> so downstream consumers are safe.
+     */
+    private fun deserializeGeo(jsonObject: JsonObject): Map<String, List<String>> {
+        val result = LinkedHashMap<String, List<String>>()
+        jsonObject.entrySet().forEach { (key, value) ->
+            result[key] = when {
+                value.isJsonArray -> value.asJsonArray.mapNotNull { element ->
+                    if (element.isJsonPrimitive) element.asString else null
+                }
+                value.isJsonPrimitive -> listOf(value.asString)
+                else -> emptyList()
+            }
+        }
+        return result
     }
 }
